@@ -163,5 +163,5 @@ function paymes_3dsecure($params)
 
 function maskCC(&$cardNumber) {
     $length = strlen($cardNumber);
-    $cardNumber = substr_replace($cardNumber, str_repeat('X', $length - 4), 0, $length - 4);
+    $cardNumber = substr_replace($cardNumber, str_repeat('*', $length - 4), 0, $length - 4);
 }
