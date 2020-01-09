@@ -29,6 +29,10 @@ function paymes_config()
     );
 }
 
+function paymes_capture($params)
+{
+}
+
 function paymes_3dsecure($params)
 {
     // Paymes Secret Key
