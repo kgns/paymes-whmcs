@@ -26,6 +26,16 @@ function paymes_config()
             'Default' => '',
             'Description' => 'paym.es\'in verdiği size özel kodu (Secret Key) buraya girin',
         ),
+	'useInvoiceAmountAsPaid' => array(
+            'FriendlyName' => 'Fatura tutarını ödenen tutar olarak kullan',
+            'Type' => 'yesno',
+            'Description' => 'Bunu yalnızca varsayılan para biriminiz TL değilken ve ödenen faturada tutar uyuşmazlığı sorunuyla karşılaşırsanız kullanın, bu seçenek, ödenen tutar olarak fatura tutarını kullanır (önerilen ayar: kapalı)',
+        ),
+        'tryToConvertCurrencyBack' => array(
+            'FriendlyName' => 'Try convert back paid amount currency',
+            'Type' => 'yesno',
+            'Description' => 'Bunu yalnızca varsayılan para biriniz TL değilken ve ödenen faturada tutar uyuşmazlığı sorunuyla karşılaşırsanız kullanın, bu seçenek, orijinal fatura para birimi tutarına geri çevirir. (önerilen ayar: kapalı)',
+        ),
     );
 }
 
@@ -37,6 +47,8 @@ function paymes_3dsecure($params)
 {
     // Paymes Secret Key
     $secretKey = $params['secretKey'];
+    $useInvoiceAmountAsPaid = $params['useInvoiceAmountAsPaid'];
+    $tryToConvertCurrencyBack = $params['tryToConvertCurrencyBack'];
 
     // Fatura bilgileri
     $invoiceId = $params['invoiceid'];
