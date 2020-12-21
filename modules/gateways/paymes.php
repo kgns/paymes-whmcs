@@ -47,8 +47,6 @@ function paymes_3dsecure($params)
 {
     // Paymes Secret Key
     $secretKey = $params['secretKey'];
-    $useInvoiceAmountAsPaid = $params['useInvoiceAmountAsPaid'];
-    $tryToConvertCurrencyBack = $params['tryToConvertCurrencyBack'];
 
     // Fatura bilgileri
     $invoiceId = $params['invoiceid'];
@@ -76,6 +74,8 @@ function paymes_3dsecure($params)
     $companyName = $params['companyname'];
     $moduleName = $params['paymentmethod'];
     $langPayNow = $params['langpaynow'];
+    $useInvoiceAmountAsPaid = $params['useInvoiceAmountAsPaid'];
+    $tryToConvertCurrencyBack = $params['tryToConvertCurrencyBack'];
 
 	if(!empty($address2)) {
 		$address1 .= " " . $address2;
