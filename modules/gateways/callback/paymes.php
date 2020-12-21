@@ -15,29 +15,47 @@ if (!$gatewayParams['type']) {
 // Paymes return post data
 $invoiceId = $_POST['id'];
 $transactionId = $_POST["payuPaymentReference"];
-$paymentAmount = $_POST["amount"];
+$paymentAmount1 = $_POST["amount"];
 $paymentFee = 0;
 $currency = $_POST["currency"];
 $message = $_POST["message"];
 $success = $_POST['status'] == '3DS_ENROLLED';
 
 /**
- * bu kodun calismasi icin TL'nin whmcs'de varsayilan para birimi "olmamasi" gerek. (not: paymes api basvurum onaylanmadigi icin henuz test edemedim)
+ * If useInvoiceAmountAsPaid enabled, use the invoice amount, 
+ * as paid amount this to avoid currency conversion issue on non-Default WHMCS Currency transaction
  */
-$result = mysql_fetch_assoc(select_query('tblinvoices', 'total, userid', array("id"=>$invoiceId))); // faturanin tutarini ve musteri id'sini alalım.
-$amount = $result['total'];
-# paymes'den gelen tutar fatura'daki tutar ile ayni mi? degilse whmcs'deki varsayilan para birimine cevirelim.
-//$currency = getCurrency();
-$result = mysql_fetch_assoc(select_query('tblclients', 'currency', array("id"=>$result['userid']))); // musterinin para birimini aldik
-$currency_id = $result['currency'];
-$result = mysql_fetch_array(select_query("tblcurrencies", "id", array("id"=>1))); // whmcs'deki varsayilan para birimin id'sini aldik.
-$default_id = $result['id'];
-if($currency_id != $default_id) { // musterinin para birimi ile whmcs'deki varsayilan para birimi ayni degilse
-    $converted_amount = convertCurrency($amount, $currency_id, $default_id); // gelen tutari whmcs'deki varsayilan para birimine cevirdik
-    $paymentAmount = $converted_amount; // whmcs gelen tutari dogru bir sekilde faturaya yazsin diye degiskene atadik.
-} else {
-    $converted_amount = $amount; // musterinin para birimi ile whmcs'deki varsayilan para birimi zaten ayniymis.
-    $paymentAmount = $converted_amount; // whmcs gelen tutari dogru bir sekilde faturaya yazsin diye degiskene atadik.
+
+if ($gatewayParams['useInvoiceAmountAsPaid'] == 'on') {
+  $invoice_result = mysql_fetch_assoc(select_query('tblinvoices', 'total, userid', array("id"=>$order_id)));
+  $invoice_amount = $invoice_result['total'];
+  $paymentAmount = $invoice_amount;
+}
+
+/**
+ * If tryToConvertCurrencyBack enabled
+ * Try to convert amount back to Default WHMCS Currency, if not Default WHMCS Currency
+ */
+if ($gatewayParams['tryToConvertCurrencyBack'] == 'on') {
+  try {
+    $invoice_result = mysql_fetch_assoc(select_query('tblinvoices', 'total, userid', array("id"=>$order_id))); 
+    $invoice_amount = $invoice_result['total'];
+    $client_result = mysql_fetch_assoc(select_query('tblclients', 'currency', array("id"=>$invoice_result['userid'])));
+    $currency_id = $client_result['currency'];
+    $idr_currency_id = $gatewayParams['convertto'];
+    if($currency_id != $idr_currency_id) {
+        $converted_amount = convertCurrency(
+          $paymentAmount1, 
+          $idr_currency_id, 
+          $currency_id
+        );
+    } else {
+        $converted_amount = $paymentAmount1;
+    }
+    $paymentAmount = $converted_amount;
+  } catch (Exception $e) {
+    echo "fail to tryToConvertCurrencyBack";
+  }
 }
 
 $transactionStatus = $success ? 'Success' : 'Failure';
