@@ -32,9 +32,9 @@ function paymes_config()
             'Description' => 'Bunu yalnızca varsayılan para biriminiz TL değilken ve ödenen faturada tutar uyuşmazlığı sorunuyla karşılaşırsanız kullanın, bu seçenek, ödenen tutar olarak fatura tutarını kullanır (önerilen ayar: kapalı)',
         ),
         'tryToConvertCurrencyBack' => array(
-            'FriendlyName' => 'Try convert back paid amount currency',
+            'FriendlyName' => 'Sanal Pos\'tan gelen tutarı dönüştür',
             'Type' => 'yesno',
-            'Description' => 'Bunu yalnızca varsayılan para biriniz TL değilken ve ödenen faturada tutar uyuşmazlığı sorunuyla karşılaşırsanız kullanın, bu seçenek, orijinal fatura para birimi tutarına geri çevirir. (önerilen ayar: kapalı)',
+            'Description' => 'Bunu yalnızca varsayılan para biriniz TL değilken ve ödenen faturada tutar uyuşmazlığı sorunuyla karşılaşırsanız kullanın, bu seçenek, sanal pos\'tan gelen tutarı orijinal fatura para birimi tutarına geri çevirir. (önerilen ayar: kapalı)',
         ),
     );
 }
